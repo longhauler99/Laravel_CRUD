@@ -6,7 +6,11 @@
         <div class="row mt-5 justify-content-center">
             <div class="col-lg-5">
                 <div class="card">
-                    <div class="card-header">Laravel CRUD<button class="btn btn-sm btn-primary float-end call-btn">Call API</button></div>
+                    <div class="card-header">Laravel CRUD
+                        <button type="button" class="btn btn-sm btn-primary float-end" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                            Add New
+                        </button>
+                    </div>
                     <div class="card-body">
                         <div class="row overflow-auto d-flex">
                             <div class="col-lg">
@@ -31,18 +35,14 @@
 @endsection
 @push('child-scripts')
     <script>
-        document.addEventListener('click', ClickHandler);
+        window.addEventListener('load', LoadHandler);
 
-        function ClickHandler()
+        function LoadHandler()
         {
             let eln = event.target;
 
-            if(eln.matches('.call-btn'))
-            {
-                let url = "<?= route('test'); ?>/"+100;
-                fetchData(url);
-
-            }
+            let url = "<?= route('test'); ?>/"+100;
+            fetchData(url);
         }
 
         async function fetchData(url)
@@ -53,6 +53,10 @@
             document.querySelector('tbody').innerHTML = data[1];
         }
 
+
+        class MainTable {
+
+        }
     </script>
 
 @endpush
