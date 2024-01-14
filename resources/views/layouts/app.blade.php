@@ -13,21 +13,60 @@
 <body>
 <div class="wrapper">
     @yield('content')
-</div>
-<!-- Modal -->
+</div>6
+
+<!-- Add Modal -->
 <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="staticBackdropLabel">Modal title</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div class="modal-header py-0 px-2">
+                <h5 class="modal-title" id="staticBackdropLabel">Add Employee</h5>
+                <button type="button" class="btn-close btn-sm" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                ...
+                {{ $errors }}
+                <form action="" method="post" id="addEmployeeForm">
+                    @csrf
+                    <div class="form-group mb-1">
+                        <label for="">UPN</label>
+                        <div class="col-sm">
+                            <input type="number" class="form-control form-control-sm" name="PayrollNum" id="">
+                            <span class="PayrollNum_error text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="form-group mb-1">
+                        <label for="">First Name</label>
+                        <div class="col-sm">
+                            <input type="text" class="form-control form-control-sm" name="FirstName" id="">
+                            <span class="FirstName_error text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="form-group mb-1">
+                        <label for="">Last Name</label>
+                        <div class="col-sm">
+                            <input type="text" class="form-control form-control-sm" name="LastName" id="">
+                            <span class="LastName_error text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="form-group mb-1">
+                        <label for="">DoB</label>
+                        <div class="col-sm">
+                            <input type="date" class="form-control form-control-sm" name="DoB" id="">
+                            <span class="DoB_error text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="form-group mb-1">
+                        <label for="">Gender</label>
+                        <div class="col-sm">
+                            <input type="text" class="form-control form-control-sm" name="Gender" id="">
+                            <span class="gender_error text-danger"></span>
+                        </div>
+                    </div>
+                </form>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Understood</button>
+            <div class="modal-footer p-0">
+                <button type="button" class="btn btn-sm btn-secondary closeBtn" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-sm btn-primary saveBtn">save</button>
             </div>
         </div>
     </div>

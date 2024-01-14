@@ -6,20 +6,24 @@
         <div class="row mt-5 justify-content-center">
             <div class="col-lg-5">
                 <div class="card">
-                    <div class="card-header">Laravel CRUD
-                        <button type="button" class="btn btn-sm btn-primary float-end" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                    <div class="card-header fw-bold">Laravel CRUD
+                        <button type="button" class="btn btn-sm btn-success float-end" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
                             Add New
                         </button>
                     </div>
+                    <span class="success_msg bg-success-subtle d-none text-center m-1 p-1 rounded-2"></span>
+{{--                    <span class="error_msg bg-danger-subtle d-none text-center text-center m-1 p-1 rounded-2"></span>--}}
                     <div class="card-body">
                         <div class="row overflow-auto d-flex">
                             <div class="col-lg">
-                                <table class="table table-bordered table-hover table-sm table-responsive">
-                                    <thead>
-                                    </thead>
-                                    <tbody>
-                                    </tbody>
-                                </table>
+                                <div class="table-responsive">
+                                    <table class="table table-sm table-bordered table-hover table-striped">
+                                        <thead>
+                                        </thead>
+                                        <tbody>
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                             <div class="col-lg">
                                 <ul class="my-list">
@@ -36,13 +40,25 @@
 @push('child-scripts')
     <script>
         window.addEventListener('load', LoadHandler);
+        document.addEventListener('click', ClickHandler);
 
         function LoadHandler()
         {
+            let url = "<?= route('view'); ?>/"+100;
+            fetchData(url);
+        }
+
+        function ClickHandler(event)
+        {
             let eln = event.target;
 
-            let url = "<?= route('test'); ?>/"+100;
-            fetchData(url);
+            if(eln.matches('.saveBtn'))
+            {
+                let apiUrl =  "<?= route('addEmployee');?>";
+                let postData = new FormData(document.querySelector('#addEmployeeForm'));
+                //
+                Save1Record(apiUrl, postData);
+            }
         }
 
         async function fetchData(url)
@@ -53,10 +69,83 @@
             document.querySelector('tbody').innerHTML = data[1];
         }
 
+        function Save1Record(apiUrl, postData)
+        {
+            let token = postData.get("_token");
+            // let redirect = '/display/employees';
+            let form = document.querySelector("#addEmployeeForm");
 
-        class MainTable {
+            const options = {
+                headers: {
+                    'Content-Type': 'application/json',
+                    "Accept": "application/json, text-plain, */*",
+                    "X-Requested-With": "XMLHttpRequest",
+                    "X-CSRF-TOKEN": token
+                },
+                method: 'POST',
+                body: jsonForm(postData),
+            };
 
+            fetch(apiUrl, options)
+                .then(response => {
+                    if(response.ok) {
+                        return response.json();
+                    }
+                    else
+                    {
+                        throw new Error(`Error: ${response.status} - ${response.statusText} `);
+                    }
+                })
+                .then(data => {
+                    // form.reset();
+                    // window.location.href = redirect;
+                    if(data.success === true)
+                    {
+                        document.querySelector(".success_msg").classList.toggle('d-none')
+                        document.querySelector(".success_msg").innerText = data.msg;
+                    }
+                    else if(data.success === false)
+                    {
+                        printValidationErrorMsg(data.input_fields, data.msg);
+                    }
+
+                    // document.querySelector(".closeBtn").click();
+                    // console.log('Response:', data);
+                })
+                .catch(error => {
+                    console.error('Fetch Error:', error);
+                })
         }
+
+        function printValidationErrorMsg(fields, msg)
+        {
+            fields = fields.slice(1);
+            // console.log(fieldNames);return;
+            fields.forEach((x) => {
+                let fieldName = document.querySelector("input[name='"+ x +"']");
+
+                // if(x === fieldName)
+                // {
+                    if(fieldName.name === x)
+                    {
+                        // alert(fieldName.name +"_error");
+                        document.querySelector("."+ x +"_error").innerText = msg;
+                        // alert(x);
+                    }
+                // }
+            })
+        }
+
+        function jsonForm(fd) //=(2022/01/17 Nelson, Mak)=//
+        {
+            let jf = {};
+            for (let pair of fd.entries()) {
+                jf[pair[0]] = pair[1];
+            }
+
+            return JSON.stringify(jf);
+        }
+
     </script>
 
 @endpush
