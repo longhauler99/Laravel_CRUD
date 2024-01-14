@@ -73,7 +73,7 @@
         {
             let token = postData.get("_token");
             // let redirect = '/display/employees';
-            let form = document.querySelector("#addEmployeeForm");
+            // let form = document.querySelector("#addEmployeeForm");
 
             const options = {
                 headers: {
