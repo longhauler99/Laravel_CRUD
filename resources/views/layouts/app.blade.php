@@ -24,7 +24,10 @@
                 <button type="button" class="btn-close btn-sm" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                {{ $errors }}
+                <div class="text-danger p-0">
+                    <ul class="error_logs">
+                    </ul>
+                </div>
                 <form action="" method="post" id="addEmployeeForm">
                     @csrf
                     <div class="form-group mb-1">

@@ -104,9 +104,10 @@
                         document.querySelector(".success_msg").classList.toggle('d-none')
                         document.querySelector(".success_msg").innerText = data.msg;
                     }
-                    else if(data.success === false)
+                    else if(data.error === true)
                     {
-                        printValidationErrorMsg(data.input_fields, data.msg);
+                        printValidationErrorMsg(data);
+                        // alert(data.errors.PayrollNum);
                     }
 
                     // document.querySelector(".closeBtn").click();
@@ -117,23 +118,14 @@
                 })
         }
 
-        function printValidationErrorMsg(fields, msg)
+        function printValidationErrorMsg(data)
         {
-            fields = fields.slice(1);
-            // console.log(fieldNames);return;
-            fields.forEach((x) => {
-                let fieldName = document.querySelector("input[name='"+ x +"']");
-
-                // if(x === fieldName)
-                // {
-                    if(fieldName.name === x)
-                    {
-                        // alert(fieldName.name +"_error");
-                        document.querySelector("."+ x +"_error").innerText = msg;
-                        // alert(x);
-                    }
-                // }
-            })
+            let my_list = "";
+            Object.entries(data.errors).forEach(([key, value]) => {
+                my_list += "<li>" + value + "</li>";
+            });
+            //
+            document.querySelector(".error_logs").innerHTML = "Oops!<br>"+ my_list;
         }
 
         function jsonForm(fd) //=(2022/01/17 Nelson, Mak)=//
