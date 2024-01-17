@@ -18,7 +18,6 @@ return new class extends Migration
     {
         Schema::create('employees', function (Blueprint $table) {
             $table->id('PayrollNum');
-            $table->string('Surname');
             $table->string('FirstName');
             $table->string('LastName');
             $table->string('DoB');

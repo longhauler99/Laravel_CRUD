@@ -44,7 +44,7 @@
 
         function LoadHandler()
         {
-            let url = "<?= route('view'); ?>/"+100;
+            let url = "<?= route('view'); ?>";
             fetchData(url);
         }
 
@@ -69,11 +69,11 @@
             document.querySelector('tbody').innerHTML = data[1];
         }
 
-        function Save1Record(apiUrl, postData)
+        function Save1Record(apiUrl, postData) // Perform crud operation
         {
             let token = postData.get("_token");
-            // let redirect = '/display/employees';
-            // let form = document.querySelector("#addEmployeeForm");
+            let redirect = "<?= route('view'); ?>";
+            let form = document.querySelector("#addEmployeeForm");
 
             const options = {
                 headers: {
@@ -103,6 +103,11 @@
                     {
                         document.querySelector(".success_msg").classList.toggle('d-none')
                         document.querySelector(".success_msg").innerText = data.msg;
+                        form.reset();
+                        document.querySelector(".closeBtn").click();
+                        // window.location.reload();
+                        let url = "<?= route('view'); ?>";
+                        fetchData(url);
                     }
                     else if(data.error === true)
                     {
@@ -118,7 +123,7 @@
                 })
         }
 
-        function printValidationErrorMsg(data)
+        function printValidationErrorMsg(data) // Display form validation messages
         {
             let my_list = "";
             Object.entries(data.errors).forEach(([key, value]) => {
@@ -128,7 +133,7 @@
             document.querySelector(".error_logs").innerHTML = "Oops!<br>"+ my_list;
         }
 
-        function jsonForm(fd) //=(2022/01/17 Nelson, Mak)=//
+        function jsonForm(fd)
         {
             let jf = {};
             for (let pair of fd.entries()) {

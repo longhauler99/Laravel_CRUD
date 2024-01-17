@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\ValidationException;
 
 class CrudController extends Controller
 {
@@ -13,7 +14,7 @@ class CrudController extends Controller
         $tBodyRows = "";
         $tHeadRow = "";
 
-        $table_columns = DB::table('employees')->select('PayrollNum', 'Surname', 'FirstName', 'LastName', 'DoB', 'Gender')->columns;
+        $table_columns = DB::table('employees')->select('PayrollNum', 'FirstName', 'LastName', 'DoB', 'Gender')->columns;
 
         $tHeadRow = "<tr>";
 
@@ -24,7 +25,7 @@ class CrudController extends Controller
 
         $tHeadRow .= "</tr>";
 
-        $table_rows = DB::table('employees')->select('PayrollNum', 'Surname', 'FirstName', 'LastName', 'DoB', 'Gender')->get();
+        $table_rows = DB::table('employees')->select('PayrollNum', 'FirstName', 'LastName', 'DoB', 'Gender')->get();
 
         if($table_rows->isEmpty())
         {
@@ -48,33 +49,46 @@ class CrudController extends Controller
         return [$tHeadRow, $tBodyRows];
     }
 
+    /**
+     * @throws ValidationException
+     */
     public function addEmployee(Request $request)
     {
 //        dd($request->all());
         if($request->isMethod('POST'))
         {
             try {
-                $validator = $request->validate([
-                    'PayrollNum'=>'required|unique:employees|min:2',
-                    'FirstName'=>'required',
+                $this->validate($request, [
+                    'PayrollNum'=>'required|unique:employees|min:11',
+                    'FirstName'=>'required|string',
+                    'LastName'=>'nullable|string',
+                    'DoB'=>'required|Date',
+                    'Gender'=>'required|string'
                 ]);
-                return response()->json(['success' => true, 'msg' => 'Employee added successfully']);
-            } catch (\Exception $e) {
 
-                $errorMsgs = ['msg' => $e->getMessage()];
-                Log::error('Exception occurred in addEmployees:', ['exception' => $e]);
-                if ($e instanceof \Illuminate\Validation\ValidationException) {
-                    // Get validation error messages
+                DB::table('employees')->insert([
+                    'PayrollNum'=>$request->input('PayrollNum'),
+                    'FirstName'=>$request->input('FirstName'),
+                    'LastName'=>$request->input('LastName'),
+                    'DoB'=>$request->input('DoB'),
+                    'Gender'=>$request->input('Gender')
+                ]);
+
+                return response()->json(['success' => true, 'msg' => 'Employee added successfully']);
+            }
+            catch (\Exception $e)
+            {
+                $errorMessages = ['validation_errors' => $e->getMessage()];
+//                Log::error('Exception occurred in addEmployees:', ['exception' => $e]);
+
+                if($e instanceof \Illuminate\Validation\ValidationException)
+                {
                     $errorMessages['validation_errors'] = $e->errors();
                 }
 
                 // Return a JSON response with aggregated error messages
                 return response()->json(['error' => true, 'errors' => $errorMessages["validation_errors"]]);
             }
-
-//            return response()->json(['error' => 'Invalid request method.']);
-//            return response()->json(['message' => 'Invalid request method.']);
-//            return redirect('/display/employees');
         }
         else
         {
@@ -89,10 +103,6 @@ function columnRenames($table_column): string
     {
         case "PayrollNum";
             $table_column = "UPN";
-            break;
-
-        case "Surname";
-            $table_column = "Surname";
             break;
 
         case "FirstName";
